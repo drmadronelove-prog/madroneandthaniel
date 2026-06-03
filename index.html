@@ -324,18 +324,12 @@
 </div>
 
 <script>
-  const PW_HASH = "516e8775659078545ee4e375dfb2c597afbc8544"; // SHA-1 of "thrive2026"
+  const PW = "thrive2026";
 
-  async function sha1(str) {
-    const buf = await crypto.subtle.digest("SHA-1", new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
-  }
-
-  async function checkPassword(e) {
+  function checkPassword(e) {
     e.preventDefault();
     const val = document.getElementById("pw-input").value;
-    const hash = await sha1(val);
-    if (hash === PW_HASH) {
+    if (val === PW) {
       sessionStorage.setItem("thrive_auth", "1");
       unlock();
     } else {
