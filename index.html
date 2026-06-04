@@ -1093,7 +1093,7 @@ const CARDS = [
     title: "Relationship",
     desc: "Your healthy relationship timeline — experiences, milestones, and what to notice along the way.",
     badge: "interactive",
-    component: <RelationshipTimeline />,
+    component: RelationshipTimeline,
     eyebrow: "2026 Thrive Guide",
   },
   {
@@ -1103,7 +1103,7 @@ const CARDS = [
     title: "Glow Up",
     desc: "Quiet luxury wardrobe & beauty checklist. Warm tones only. No black. Gold not silver.",
     badge: "interactive",
-    component: <GlowUpTabs />,
+    component: GlowUpTabs,
     eyebrow: "Wardrobe & Beauty",
   },
   {
@@ -1113,7 +1113,7 @@ const CARDS = [
     title: "Nesting",
     desc: "Making your home feel like you — warmth, intention, and the small things that make a space yours.",
     badge: "interactive",
-    component: <NestingList />,
+    component: NestingList,
     eyebrow: "Home & Space",
   },
   {
@@ -1123,7 +1123,7 @@ const CARDS = [
     title: "Fun",
     desc: "What you're doing for pure pleasure this year — trips, moments, things that are just for you.",
     badge: "interactive",
-    component: <FunList />,
+    component: FunList,
     eyebrow: "Joy & Adventure",
   },
 ];
@@ -1207,7 +1207,7 @@ function App() {
               <button className="modal-close" onClick={() => setOpen(null)} aria-label="Close">✕</button>
             </div>
             <div className="modal-body">
-              {card.component ? card.component : (
+              {card.component ? React.createElement(card.component) : (
                 <div className="coming-soon">
                   <div className="big-emoji">{card.emoji}</div>
                   <h3>{card.title}</h3>
