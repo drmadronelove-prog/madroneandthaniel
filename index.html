@@ -952,11 +952,96 @@ function FunList() {
   );
 }
 
+// ─────────────────────────────────────────────
+// SUPPLEMENT STACK
+// ─────────────────────────────────────────────
+const SUPPLEMENTS = [
+  {
+    section: "Food noise + compulsive loop",
+    items: [
+      { name:"NAC (N-acetyl cysteine)", dose:"600mg twice daily", timing:"Morning and evening with food", note:"Mild serotonergic activity — monitor for agitation. Many psych providers use with sertraline intentionally.", warn:"watch with sert" },
+      { name:"Myo-inositol", dose:"2g twice daily", timing:"Start at 2g total — increase slowly over 2–4 weeks", note:"Modulates serotonin receptors. Start low. May potentiate sertraline. Allow 4–8 weeks for full effect.", warn:"start low" },
+      { name:"Glutamine", dose:"5g three times daily", timing:"On tongue before meals or when cravings hit", note:"Clean — no meaningful interactions with either med.", warn:null },
+    ]
+  },
+  {
+    section: "Blood sugar + metabolic",
+    items: [
+      { name:"Berberine", dose:"500mg once daily to start", timing:"With dinner — increase to twice daily if tolerated", note:"CYP interaction is real but low at your modafinil dose. Start with one dose, monitor for modafinil feeling stronger. Mention to prescriber.", warn:"mention to prescriber" },
+    ]
+  },
+  {
+    section: "Foundation",
+    items: [
+      { name:"Magnesium glycinate", dose:"400mg", timing:"At night before bed", note:"No interactions. Supports cortisol, sleep, and cravings.", warn:null },
+      { name:"Zinc", dose:"25mg", timing:"With food — not same time as magnesium", note:"Take copper 1–2mg if using longer than 3 months. Zinc depletes copper over time.", warn:"add copper at 3mo" },
+      { name:"B complex", dose:"Standard dose (not mega-dose)", timing:"Morning with food", note:"High-dose B6 has weak serotonin activity — standard dose only.", warn:null },
+    ]
+  },
+];
+
+function SupplementStack() {
+  const [checked, setChecked] = useState(() => {
+    try { return new Set(JSON.parse(localStorage.getItem("thrive-supps") || "[]")); }
+    catch { return new Set(); }
+  });
+
+  const toggle = (key) => {
+    setChecked(prev => {
+      const next = new Set(prev);
+      next.has(key) ? next.delete(key) : next.add(key);
+      localStorage.setItem("thrive-supps", JSON.stringify([...next]));
+      return next;
+    });
+  };
+
+  return (
+    <div>
+      <div style={{ background:"#EBF3FB", border:"1px solid #A8C4D8", borderRadius:6, padding:"12px 14px", marginBottom:20, fontSize:13, color:"#1E3D51", lineHeight:1.6, display:"flex", gap:10, alignItems:"flex-start" }}>
+        <span style={{ fontSize:16, flexShrink:0, marginTop:1 }}>💊</span>
+        <span>Rx: sertraline 150mg + modafinil 150–200mg daily. Start new supplements one at a time, one week apart.</span>
+      </div>
+
+      {SUPPLEMENTS.map((group) => (
+        <div key={group.section} style={{ marginBottom:8 }}>
+          <div style={{ fontSize:10, fontWeight:600, letterSpacing:"2px", textTransform:"uppercase", color:"#9C8C7D", margin:"20px 0 4px" }}>{group.section}</div>
+          {group.items.map((item, i) => {
+            const key = `${group.section}-${i}`;
+            const isChecked = checked.has(key);
+            return (
+              <div key={i} style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"14px 0", borderBottom:"0.5px solid #E6D5C8" }}>
+                <div
+                  onClick={() => toggle(key)}
+                  style={{ width:22, height:22, minWidth:22, borderRadius:6, border: isChecked ? "none" : "1.5px solid #C4A882", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", transition:"all 0.15s", background: isChecked ? "#1D9E75" : "transparent", flexShrink:0, marginTop:1 }}
+                >
+                  {isChecked && <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5L4.5 8L9 3" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                </div>
+                <div style={{ flex:1 }}>
+                  <div style={{ fontSize:14, fontWeight:500, color:"#3A322B", marginBottom:3, display:"flex", alignItems:"center", flexWrap:"wrap", gap:6 }}>
+                    {item.name}
+                    {item.warn
+                      ? <span style={{ fontSize:10, fontWeight:500, padding:"2px 7px", background:"#FBF0ED", color:"#BD6440", borderRadius:4 }}>{item.warn}</span>
+                      : <span style={{ fontSize:10, fontWeight:500, padding:"2px 7px", background:"#EEF2EA", color:"#5F6B48", borderRadius:4 }}>clean</span>
+                    }
+                  </div>
+                  <div style={{ fontSize:12, color:"#6D6258", marginBottom:4 }}>{item.dose} · {item.timing}</div>
+                  <div style={{ fontSize:11, color:"#9C8C7D", lineHeight:1.5 }}>{item.note}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function GlowUpTabs() {
   const [tab, setTab] = useState("wardrobe");
   const tabs = [
-    { id:"wardrobe", label:"Wardrobe & Beauty" },
-    { id:"mindset",  label:"Decisional Balance" },
+    { id:"wardrobe",     label:"Wardrobe & Beauty" },
+    { id:"mindset",      label:"Decisional Balance" },
+    { id:"supplements",  label:"Supplement Stack" },
   ];
   return (
     <div>
@@ -971,7 +1056,7 @@ function GlowUpTabs() {
           }}>{t.label}</button>
         ))}
       </div>
-      {tab === "wardrobe" ? <GlowUpChecklist /> : <DecisionalBalance />}
+      {tab === "wardrobe" ? <GlowUpChecklist /> : tab === "mindset" ? <DecisionalBalance /> : <SupplementStack />}
     </div>
   );
 }
