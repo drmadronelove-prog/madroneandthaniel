@@ -520,7 +520,7 @@ function RelationshipTimeline() {
             <span style={{ fontSize:15, fontWeight:500, color:"#3A2E22" }}>{phase.title}</span>
             {phase.youAreHere && (
               <span style={{ display:"inline-flex", alignItems:"center", gap:4, padding:"2px 10px", borderRadius:99, fontSize:11, fontWeight:500, background:"#FBF0ED", color:"#C75B3A", border:"0.5px solid #D4537E" }}>
-                📍 you are here
+                 you are here
               </span>
             )}
             <span style={{ fontSize:12, color:"#8B7B68", marginLeft:"auto" }}>{phase.sub}</span>
@@ -568,7 +568,7 @@ function RelationshipTimeline() {
 // QUIET LUXURY CHECKLIST
 // ─────────────────────────────────────────────
 const CATEGORIES = [
-  { title:"Tops", icon:"👚", items:[
+  { title:"Tops", icon:"", items:[
     {name:"Crew neck sweater",color:"cream",qty:1,search:"cream cashmere crew neck sweater"},
     {name:"Crew neck sweater",color:"camel",qty:1,search:"camel crew neck sweater"},
     {name:"Crew neck sweater",color:"olive",qty:1,search:"olive crew neck sweater women"},
@@ -579,27 +579,27 @@ const CATEGORIES = [
     {name:"Slouchy sweatshirt",color:"navy",qty:1,search:"oversized navy sweatshirt women"},
     {name:"Button down shirt",color:"cream or chambray",qty:1,search:"cream button down shirt women"},
   ]},
-  { title:"Bottoms", icon:"👖", items:[
+  { title:"Bottoms", icon:"", items:[
     {name:"Dark wash straight leg jeans",color:"",qty:2,search:"Agolde dark wash straight leg jeans women",brands:"Agolde, Citizens of Humanity"},
     {name:"Wide leg trouser",color:"cream or tan",qty:1,search:"wide leg cream trouser women",brands:"Vince, COS"},
     {name:"Full length skirt",color:"navy or olive",qty:1,search:"maxi skirt navy women",brands:"6397, Eileen Fisher"},
   ]},
-  { title:"Layers", icon:"🧥", items:[
+  { title:"Layers", icon:"", items:[
     {name:"Oversized camel coat",color:"camel",qty:1,search:"oversized camel coat women",brands:"The Row, Mango, COS"},
     {name:"Blazer",color:"warm brown or olive",qty:1,search:"brown blazer women oversized",brands:"Aritzia, Vince"},
     {name:"Cardigan",color:"oatmeal or rust",qty:1,search:"oversized cardigan oatmeal women",brands:"Jenni Kayne, Everlane"},
   ]},
-  { title:"Shoes", icon:"👟", items:[
+  { title:"Shoes", icon:"", items:[
     {name:"Brown leather loafers",color:"warm brown",qty:1,search:"brown leather loafers women",brands:"Madewell, Everlane"},
     {name:"New Balance sneakers",color:"warm neutral tones",qty:1,search:"New Balance 327 or 574 women warm tone",brands:"New Balance 327, 574, 2002R"},
     {name:"Brown leather ankle boots",color:"warm brown",qty:1,search:"brown leather ankle boots women",brands:"Madewell, La Canadienne"},
     {name:"Flat sandal",color:"tan leather",qty:1,search:"tan leather flat sandal women",brands:"Nisolo, Ancient Greek Sandals"},
   ]},
-  { title:"Bags", icon:"👜", items:[
+  { title:"Bags", icon:"", items:[
     {name:"Structured leather tote",color:"tan or cognac",qty:1,search:"cognac leather tote bag women",brands:"Madewell, Cuyana"},
     {name:"Small crossbody",color:"brown or warm tone",qty:1,search:"brown leather crossbody bag women",brands:"Polene, A.P.C."},
   ]},
-  { title:"Gold jewelry", icon:"✨", items:[
+  { title:"Gold jewelry", icon:"", items:[
     {name:"Layering chain, short (16in)",color:"gold",qty:1,search:"gold chain necklace 16 inch women"},
     {name:"Layering chain, mid (18in)",color:"gold",qty:1,search:"gold chain necklace 18 inch women"},
     {name:"Pendant necklace (20in)",color:"gold",qty:1,search:"gold pendant necklace women minimal"},
@@ -608,11 +608,11 @@ const CATEGORIES = [
     {name:"Gold cuff bracelet",color:"gold",qty:1,search:"gold cuff bracelet women minimal"},
     {name:"Stacking rings (set of 2+)",color:"gold",qty:1,search:"gold stacking rings women"},
   ]},
-  { title:"Accessories", icon:"🧣", items:[
+  { title:"Accessories", icon:"", items:[
     {name:"Silk scarf",color:"terracotta/cream/olive tones",qty:1,search:"silk scarf warm tones women"},
     {name:"Leather belt",color:"cognac or tan",qty:1,search:"cognac leather belt women"},
   ]},
-  { title:"Makeup", icon:"💄", items:[
+  { title:"Makeup", icon:"", items:[
     {name:"Tinted moisturizer",color:"warm undertone match",qty:1,search:"tinted moisturizer warm undertone",brands:"ILIA, Tower 28, Kosas"},
     {name:"Cream bronzer",color:"warm bronze",qty:1,search:"cream bronzer warm skin tone",brands:"Tower 28, Saie, Fenty"},
     {name:"Cream blush",color:"warm peach or coral",qty:1,search:"cream blush warm peach",brands:"Rare Beauty, Tower 28"},
@@ -627,13 +627,13 @@ const CATEGORIES = [
     {name:"Concealer",color:"warm undertone match",qty:1,search:"concealer warm undertone medium",brands:"NARS, Fenty, Kosas"},
     {name:"Setting spray or powder",color:"translucent",qty:1,search:"setting spray dewy finish",brands:"Charlotte Tilbury, NYX"},
   ]},
-  { title:"Skincare (TJ's run)", icon:"🧴", items:[
+  { title:"Skincare (TJ's run)", icon:"", items:[
     {name:"Vitamin C Serum",color:"",qty:1,search:"Trader Joe's Vitamin C Serum",brands:"Trader Joe's ($9.99)"},
     {name:"Ultra Hydrating Gel Moisturizer",color:"",qty:1,search:"Trader Joe's Ultra Hydrating Gel Moisturizer",brands:"Trader Joe's"},
     {name:"Daily Facial Sunscreen (invisible)",color:"",qty:1,search:"Trader Joe's Daily Facial Sunscreen",brands:"Trader Joe's"},
     {name:"Dewy Skin Serum",color:"",qty:1,search:"Trader Joe's Dewy Skin Serum",brands:"Trader Joe's ($9.99)"},
   ]},
-  { title:"Grooming", icon:"🪒", items:[
+  { title:"Grooming", icon:"", items:[
     {name:"Dermaplaning tool",color:"",qty:1,search:"dermaplaning razor women face",brands:"Tinkle, Schick, Kitsch"},
     {name:"Self tanner (face)",color:"warm tone",qty:1,search:"self tanner face natural",brands:"Isle of Paradise, Coco & Eve, St. Tropez"},
     {name:"Root touch up",color:"match current shade",qty:1,search:"Madison Reed root touch up",brands:"Madison Reed"},
@@ -1050,7 +1050,7 @@ function SupplementStack() {
 
       {/* Rx note */}
       <div style={{ background:"#EBF3FB", border:"1px solid #A8C4D8", borderRadius:6, padding:"12px 14px", marginBottom:20, fontSize:13, color:"#1E3D51", lineHeight:1.6, display:"flex", gap:10, alignItems:"flex-start" }}>
-        <span style={{ fontSize:16, flexShrink:0, marginTop:1 }}>💊</span>
+        <span style={{ fontSize:16, flexShrink:0, marginTop:1 }}></span>
         <span>Rx: sertraline 150mg + modafinil 150–200mg daily. Start new supplements one at a time, one week apart.</span>
       </div>
 
@@ -1119,7 +1119,7 @@ function GlowUpTabs() {
 const CARDS = [
   {
     id: "relationship",
-    emoji: "💛",
+    emoji: "",
     className: "relationship",
     title: "Relationship",
     desc: "Your healthy relationship timeline — experiences, milestones, and what to notice along the way.",
@@ -1129,7 +1129,7 @@ const CARDS = [
   },
   {
     id: "glow-up",
-    emoji: "✨",
+    emoji: "",
     className: "glow-up",
     title: "Glow Up",
     desc: "Quiet luxury wardrobe & beauty checklist. Warm tones only. No black. Gold not silver.",
@@ -1139,7 +1139,7 @@ const CARDS = [
   },
   {
     id: "nesting",
-    emoji: "🏡",
+    emoji: "",
     className: "nesting",
     title: "Nesting",
     desc: "Making your home feel like you — warmth, intention, and the small things that make a space yours.",
@@ -1149,7 +1149,7 @@ const CARDS = [
   },
   {
     id: "fun",
-    emoji: "🌴",
+    emoji: "",
     className: "fun",
     title: "Fun",
     desc: "What you're doing for pure pleasure this year — trips, moments, things that are just for you.",
@@ -1235,7 +1235,7 @@ function App() {
                 <div className="modal-eyebrow">{card.eyebrow}</div>
                 <div className="modal-title">{card.emoji} {card.title}</div>
               </div>
-              <button className="modal-close" onClick={() => setOpen(null)} aria-label="Close">✕</button>
+              <button className="modal-close" onClick={() => setOpen(null)} aria-label="Close"></button>
             </div>
             <div className="modal-body">
               {card.component ? React.createElement(card.component) : (
