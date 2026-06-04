@@ -997,6 +997,26 @@ function SupplementStack() {
 
   return (
     <div>
+      {/* IF window card */}
+      <div style={{ background:"#F7F0E6", border:"1px solid #E6D5C8", borderRadius:6, padding:"14px 16px", marginBottom:12 }}>
+        <div style={{ fontSize:10, fontWeight:600, letterSpacing:"2px", textTransform:"uppercase", color:"#B0831F", marginBottom:8 }}>Intermittent fasting window</div>
+        <div style={{ display:"flex", alignItems:"center", gap:0, marginBottom:10 }}>
+          <div style={{ flex:1, textAlign:"center", padding:"10px 8px", background:"#1E3D51", borderRadius:"4px 0 0 4px" }}>
+            <div style={{ fontSize:11, color:"rgba(255,255,255,0.5)", marginBottom:2 }}>eat from</div>
+            <div style={{ fontSize:20, fontFamily:"'Newsreader',serif", fontWeight:300, color:"#D4A84B" }}>10 am</div>
+          </div>
+          <div style={{ padding:"0 10px", color:"#9C8C7D", fontSize:13 }}>→</div>
+          <div style={{ flex:1, textAlign:"center", padding:"10px 8px", background:"#1E3D51", borderRadius:"0 4px 4px 0" }}>
+            <div style={{ fontSize:11, color:"rgba(255,255,255,0.5)", marginBottom:2 }}>stop at</div>
+            <div style={{ fontSize:20, fontFamily:"'Newsreader',serif", fontWeight:300, color:"#D4A84B" }}>8 pm</div>
+          </div>
+        </div>
+        <div style={{ fontSize:12, color:"#6D6258", lineHeight:1.6 }}>
+          10-hour eating window. Fast 16 hours. The food noise supplement stack below is designed to work alongside this window — glutamine on the tongue when cravings hit during fasting hours.
+        </div>
+      </div>
+
+      {/* Rx note */}
       <div style={{ background:"#EBF3FB", border:"1px solid #A8C4D8", borderRadius:6, padding:"12px 14px", marginBottom:20, fontSize:13, color:"#1E3D51", lineHeight:1.6, display:"flex", gap:10, alignItems:"flex-start" }}>
         <span style={{ fontSize:16, flexShrink:0, marginTop:1 }}>💊</span>
         <span>Rx: sertraline 150mg + modafinil 150–200mg daily. Start new supplements one at a time, one week apart.</span>
