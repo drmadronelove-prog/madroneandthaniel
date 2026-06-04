@@ -638,6 +638,95 @@ const CATEGORIES = [
   ]},
 ];
 
+// ─────────────────────────────────────────────
+// DECISIONAL BALANCE MATRIX
+// ─────────────────────────────────────────────
+function DecisionalBalance() {
+  const quadrants = [
+    {
+      label: "Benefits of changing",
+      sub: "What would be better if you made this change?",
+      color: "#5A6E4A", bg: "#EEF2EA", border: "#C4D4B4",
+      items: [
+        "feel better about my body","fit clothes better","healthier",
+        "feel more confident","prettier","develop healthy habits",
+        "demonstrate self control","feel better with thaniel",
+      ],
+    },
+    {
+      label: "Costs of changing",
+      sub: "What would be harder or lost if you changed?",
+      color: "#A0522D", bg: "#FBF0ED", border: "#E8C4B0",
+      items: [
+        "no constant snacking","no evening snacking","can't eat whatever I want",
+        "have to be mindful of what I eat","effort directed towards eating",
+        "more control over myself","more planning what I'm going to eat",
+        "focus on food","no chips, popcorn, pizza","deal with food noise",
+        "discomfort","set rules and follow them",
+      ],
+    },
+    {
+      label: "Costs of staying the same",
+      sub: "What does not changing cost you?",
+      color: "#A0522D", bg: "#FBF0ED", border: "#E8C4B0",
+      items: [
+        "feel shame","discomfort in my clothes","embarrassed of my fat",
+        "less attractive in my face","can't wear some favorite clothes",
+        "won't wear tank tops or shorts","ugly in pictures","unhealthy",
+        "expensive to eat so much","feel bad about my body — critical",
+        "mean to myself","hide my body","I'll get fatter",
+      ],
+    },
+    {
+      label: "Benefits of staying the same",
+      sub: "What works about things as they are?",
+      color: "#5A6E4A", bg: "#EEF2EA", border: "#C4D4B4",
+      items: [
+        "continue to eat what I want","snack all day","no effort",
+        "pizza, chips, chocolate and walnuts","eat the best tasting foods",
+        "enjoy food as much as possible","no effort or control",
+      ],
+    },
+  ];
+
+  const reflection = "I'm poisoning myself with all of this crappy food — and eating so much. I'm turning my body into something I don't want it to be. The costs of staying the same are so much heavier than the costs of changing.";
+
+  return (
+    <div>
+      <div style={{ marginBottom:20 }}>
+        <div style={{ fontSize:10, fontWeight:500, letterSpacing:"2px", textTransform:"uppercase", color:"#8B7B68", marginBottom:6 }}>ADHD Tools & Resources</div>
+        <div style={{ fontFamily:"'Cormorant Garamond',Georgia,serif", fontSize:22, fontWeight:600, color:"#3A2E22", marginBottom:8 }}>Decisional Balance Matrix</div>
+        <div style={{ fontSize:13, color:"#8B7B68", lineHeight:1.6, marginBottom:12 }}>
+          A structured way to think through a change you are considering — not to find the "right" answer, but to see the full picture of what you are actually weighing.
+        </div>
+        <div style={{ padding:"10px 14px", background:"#F7F0E6", borderRadius:8, border:"1px solid #E8DFD4" }}>
+          <div style={{ fontSize:10, fontWeight:500, letterSpacing:"2px", textTransform:"uppercase", color:"#8B7B68", marginBottom:4 }}>What decision or change are you weighing?</div>
+          <div style={{ fontFamily:"'Cormorant Garamond',Georgia,serif", fontSize:18, fontWeight:500, color:"#3A2E22" }}>lose weight</div>
+        </div>
+      </div>
+
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:16 }}>
+        {quadrants.map((q, i) => (
+          <div key={i} style={{ padding:"14px", borderRadius:10, background:q.bg, border:`1px solid ${q.border}` }}>
+            <div style={{ fontSize:12, fontWeight:600, color:q.color, marginBottom:3, lineHeight:1.3 }}>{q.label}</div>
+            <div style={{ fontSize:11, color:"#8B7B68", marginBottom:10, lineHeight:1.4 }}>{q.sub}</div>
+            <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+              {q.items.map((item, j) => (
+                <div key={j} style={{ fontSize:12, color:"#3A2E22", lineHeight:1.4, paddingLeft:10, borderLeft:`2px solid ${q.border}` }}>{item}</div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ padding:"16px", background:"#F7F0E6", borderRadius:10, border:"1px solid #E8DFD4" }}>
+        <div style={{ fontSize:10, fontWeight:500, letterSpacing:"2px", textTransform:"uppercase", color:"#8B7B68", marginBottom:8 }}>Reflection — What do you notice?</div>
+        <div style={{ fontSize:13, color:"#3A2E22", lineHeight:1.7, fontStyle:"italic" }}>"{reflection}"</div>
+      </div>
+    </div>
+  );
+}
+
 function GlowUpChecklist() {
   const [checked, setChecked] = useState(() => {
     try { return new Set(JSON.parse(localStorage.getItem("thrive-glowup") || "[]")); }
@@ -791,6 +880,30 @@ function NestingList() {
   );
 }
 
+function GlowUpTabs() {
+  const [tab, setTab] = useState("wardrobe");
+  const tabs = [
+    { id:"wardrobe", label:"Wardrobe & Beauty" },
+    { id:"mindset",  label:"Decisional Balance" },
+  ];
+  return (
+    <div>
+      <div style={{ display:"flex", gap:8, marginBottom:24, borderBottom:"1px solid #E8DFD4", paddingBottom:0 }}>
+        {tabs.map(t => (
+          <button key={t.id} onClick={() => setTab(t.id)} style={{
+            fontFamily:"'DM Sans',sans-serif", fontSize:12, fontWeight:500,
+            padding:"8px 14px", border:"none", background:"none", cursor:"pointer",
+            color: tab === t.id ? "#3A2E22" : "#8B7B68",
+            borderBottom: tab === t.id ? "2px solid #8B6B2F" : "2px solid transparent",
+            marginBottom:"-1px", transition:"color 0.15s",
+          }}>{t.label}</button>
+        ))}
+      </div>
+      {tab === "wardrobe" ? <GlowUpChecklist /> : <DecisionalBalance />}
+    </div>
+  );
+}
+
 // ─────────────────────────────────────────────
 // MAIN APP
 // ─────────────────────────────────────────────
@@ -812,7 +925,7 @@ const CARDS = [
     title: "Glow Up",
     desc: "Quiet luxury wardrobe & beauty checklist. Warm tones only. No black. Gold not silver.",
     badge: "interactive",
-    component: <GlowUpChecklist />,
+    component: <GlowUpTabs />,
     eyebrow: "Wardrobe & Beauty",
   },
   {
