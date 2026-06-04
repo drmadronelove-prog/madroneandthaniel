@@ -886,69 +886,100 @@ function NestingList() {
 // ─────────────────────────────────────────────
 // FUN — TRIPS & ADVENTURES
 // ─────────────────────────────────────────────
-const FUN_ITEMS = [
-  {
-    name: "Norway — Fjords",
-    note: "Fjordtours guide to fjords in Norway",
-    url: "https://www.fjordtours.com/en/norway/places-to-visit/fjords/fjords-in-norway",
-    emoji: "🇳🇴",
-  },
-  {
-    name: "Iceland — Black Sand Beaches",
-    note: "Go Campers guide to black sand beaches",
-    url: "https://www.gocampers.is/nature/beaches/black-sand-beaches-iceland/",
-    emoji: "🇮🇸",
-  },
+const DEFAULT_FUN_ITEMS = [
+  { id:"fun-1", name:"Norway — Fjords", note:"Fjordtours guide to fjords in Norway", url:"https://www.fjordtours.com/en/norway/places-to-visit/fjords/fjords-in-norway" },
+  { id:"fun-2", name:"Iceland — Black Sand Beaches", note:"Go Campers guide to black sand beaches", url:"https://www.gocampers.is/nature/beaches/black-sand-beaches-iceland/" },
 ];
 
 function FunList() {
+  const [items, setItems] = useState(() => {
+    try {
+      const saved = localStorage.getItem("thrive-fun-items");
+      return saved ? JSON.parse(saved) : DEFAULT_FUN_ITEMS;
+    } catch { return DEFAULT_FUN_ITEMS; }
+  });
   const [checked, setChecked] = useState(() => {
-    try { return new Set(JSON.parse(localStorage.getItem("thrive-fun") || "[]")); }
+    try { return new Set(JSON.parse(localStorage.getItem("thrive-fun-checked") || "[]")); }
     catch { return new Set(); }
   });
+  const [adding, setAdding] = useState(false);
+  const [form, setForm] = useState({ name:"", note:"", url:"" });
 
-  const toggle = (i) => {
+  const saveItems = (next) => {
+    setItems(next);
+    localStorage.setItem("thrive-fun-items", JSON.stringify(next));
+  };
+
+  const toggle = (id) => {
     setChecked(prev => {
       const next = new Set(prev);
-      next.has(i) ? next.delete(i) : next.add(i);
-      localStorage.setItem("thrive-fun", JSON.stringify([...next]));
+      next.has(id) ? next.delete(id) : next.add(id);
+      localStorage.setItem("thrive-fun-checked", JSON.stringify([...next]));
       return next;
     });
   };
 
+  const addItem = () => {
+    if (!form.name.trim()) return;
+    const newItem = { id: "fun-" + Date.now(), name: form.name.trim(), note: form.note.trim(), url: form.url.trim() };
+    saveItems([...items, newItem]);
+    setForm({ name:"", note:"", url:"" });
+    setAdding(false);
+  };
+
+  const removeItem = (id) => {
+    saveItems(items.filter(it => it.id !== id));
+    setChecked(prev => { const next = new Set(prev); next.delete(id); localStorage.setItem("thrive-fun-checked", JSON.stringify([...next])); return next; });
+  };
+
+  const inp = { fontFamily:"'Hanken Grotesk',sans-serif", fontSize:13, color:"#3A322B", background:"#F6EBE3", border:"1px solid #E6D5C8", borderRadius:0, padding:"10px 12px", outline:"none", width:"100%" };
+
   return (
     <div>
-      <div style={{ fontSize:13, color:"#8B7B68", marginBottom:20, lineHeight:1.6 }}>
+      <div style={{ fontSize:13, color:"#6D6258", marginBottom:20, lineHeight:1.6 }}>
         Places on the list — tap a link to explore, check it off when you're ready to book.
       </div>
+
       <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-        {FUN_ITEMS.map((item, i) => {
-          const isChecked = checked.has(i);
+        {items.map((item) => {
+          const isChecked = checked.has(item.id);
           return (
-            <div key={i} style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"16px", borderRadius:12, border:`1px solid ${isChecked ? "#A8C4D8" : "#E8DFD4"}`, background: isChecked ? "#EBF3FB" : "#FFFCF7" }}>
+            <div key={item.id} style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"16px", border:`1px solid ${isChecked ? "#A8C4D8" : "#E6D5C8"}`, background: isChecked ? "#EBF3FB" : "#fff" }}>
               <div
-                onClick={() => toggle(i)}
+                onClick={() => toggle(item.id)}
                 style={{ width:22, height:22, minWidth:22, borderRadius:"50%", border: isChecked ? "none" : "2px solid #C4A882", background: isChecked ? "#2C5670" : "transparent", display:"flex", alignItems:"center", justifyContent:"center", marginTop:2, cursor:"pointer", transition:"all 0.2s", flexShrink:0 }}
               >
                 {isChecked && <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
               </div>
               <div style={{ flex:1 }}>
-                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:4 }}>
-                  <span style={{ fontSize:20 }}>{item.emoji}</span>
-                  <div style={{ fontFamily:"'Newsreader',Georgia,serif", fontSize:18, fontWeight:500, color:"#3A2E22", textDecoration: isChecked ? "line-through" : "none", lineHeight:1.3 }}>{item.name}</div>
-                </div>
-                {item.note && <div style={{ fontSize:12, color:"#8B7B68", marginBottom:8 }}>{item.note}</div>}
-                <a href={item.url} target="_blank" rel="noopener noreferrer" style={{ fontSize:12, color:"#2C5670", fontWeight:500, textDecoration:"none", display:"inline-flex", alignItems:"center", gap:4 }}>
-                  Explore →
-                </a>
+                <div style={{ fontFamily:"'Newsreader',Georgia,serif", fontSize:18, fontWeight:400, color:"#3A322B", textDecoration: isChecked ? "line-through" : "none", lineHeight:1.3, marginBottom:4 }}>{item.name}</div>
+                {item.note && <div style={{ fontSize:12, color:"#6D6258", marginBottom:6 }}>{item.note}</div>}
+                {item.url && <a href={item.url} target="_blank" rel="noopener noreferrer" style={{ fontSize:12, color:"#2C5670", fontWeight:500, textDecoration:"none" }}>Explore →</a>}
               </div>
+              <button onClick={() => removeItem(item.id)} style={{ background:"none", border:"none", cursor:"pointer", color:"#C4B8AF", fontSize:16, padding:"0 2px", lineHeight:1, flexShrink:0 }} title="Remove">×</button>
             </div>
           );
         })}
       </div>
-      <div style={{ marginTop:24, padding:"14px 16px", background:"#EBF3FB", borderRadius:12, border:"1px solid #A8C4D8", fontSize:13, color:"#2C5670", lineHeight:1.6 }}>
-        More adventures coming soon — add them anytime.
-      </div>
+
+      {adding ? (
+        <div style={{ marginTop:16, border:"1px solid #E6D5C8", padding:"16px", background:"#fff" }}>
+          <div style={{ fontSize:10, fontWeight:600, letterSpacing:"2px", textTransform:"uppercase", color:"#B0831F", marginBottom:12 }}>New adventure</div>
+          <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+            <input style={inp} placeholder="Name (e.g. Japan — Kyoto temples)" value={form.name} onChange={e => setForm(f => ({...f, name:e.target.value}))} onKeyDown={e => e.key==="Enter" && addItem()} autoFocus />
+            <input style={inp} placeholder="Note (optional)" value={form.note} onChange={e => setForm(f => ({...f, note:e.target.value}))} />
+            <input style={inp} placeholder="Link (optional)" value={form.url} onChange={e => setForm(f => ({...f, url:e.target.value}))} />
+            <div style={{ display:"flex", gap:8, marginTop:4 }}>
+              <button onClick={addItem} style={{ flex:1, padding:"10px", background:"#1E3D51", color:"#fff", border:"none", cursor:"pointer", fontFamily:"'Hanken Grotesk',sans-serif", fontSize:11, fontWeight:600, letterSpacing:"2px", textTransform:"uppercase" }}>Add</button>
+              <button onClick={() => { setAdding(false); setForm({name:"",note:"",url:""}); }} style={{ padding:"10px 16px", background:"none", color:"#9C8C7D", border:"1px solid #E6D5C8", cursor:"pointer", fontFamily:"'Hanken Grotesk',sans-serif", fontSize:11 }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <button onClick={() => setAdding(true)} style={{ marginTop:16, width:"100%", padding:"12px", background:"none", border:"1px dashed #C4B0A0", color:"#9C8C7D", cursor:"pointer", fontFamily:"'Hanken Grotesk',sans-serif", fontSize:12, fontWeight:500, letterSpacing:"0.5px" }}>
+          + Add an adventure
+        </button>
+      )}
     </div>
   );
 }
