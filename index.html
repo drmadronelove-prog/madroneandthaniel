@@ -880,6 +880,76 @@ function NestingList() {
   );
 }
 
+// ─────────────────────────────────────────────
+// FUN — TRIPS & ADVENTURES
+// ─────────────────────────────────────────────
+const FUN_ITEMS = [
+  {
+    name: "Norway — Fjords",
+    note: "Fjordtours guide to fjords in Norway",
+    url: "https://www.fjordtours.com/en/norway/places-to-visit/fjords/fjords-in-norway",
+    emoji: "🇳🇴",
+  },
+  {
+    name: "Iceland — Black Sand Beaches",
+    note: "Go Campers guide to black sand beaches",
+    url: "https://www.gocampers.is/nature/beaches/black-sand-beaches-iceland/",
+    emoji: "🇮🇸",
+  },
+];
+
+function FunList() {
+  const [checked, setChecked] = useState(() => {
+    try { return new Set(JSON.parse(localStorage.getItem("thrive-fun") || "[]")); }
+    catch { return new Set(); }
+  });
+
+  const toggle = (i) => {
+    setChecked(prev => {
+      const next = new Set(prev);
+      next.has(i) ? next.delete(i) : next.add(i);
+      localStorage.setItem("thrive-fun", JSON.stringify([...next]));
+      return next;
+    });
+  };
+
+  return (
+    <div>
+      <div style={{ fontSize:13, color:"#8B7B68", marginBottom:20, lineHeight:1.6 }}>
+        Places on the list — tap a link to explore, check it off when you're ready to book.
+      </div>
+      <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+        {FUN_ITEMS.map((item, i) => {
+          const isChecked = checked.has(i);
+          return (
+            <div key={i} style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"16px", borderRadius:12, border:`1px solid ${isChecked ? "#A8C4D8" : "#E8DFD4"}`, background: isChecked ? "#EBF3FB" : "#FFFCF7" }}>
+              <div
+                onClick={() => toggle(i)}
+                style={{ width:22, height:22, minWidth:22, borderRadius:"50%", border: isChecked ? "none" : "2px solid #C4A882", background: isChecked ? "#2C5670" : "transparent", display:"flex", alignItems:"center", justifyContent:"center", marginTop:2, cursor:"pointer", transition:"all 0.2s", flexShrink:0 }}
+              >
+                {isChecked && <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+              </div>
+              <div style={{ flex:1 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:4 }}>
+                  <span style={{ fontSize:20 }}>{item.emoji}</span>
+                  <div style={{ fontFamily:"'Cormorant Garamond',Georgia,serif", fontSize:18, fontWeight:500, color:"#3A2E22", textDecoration: isChecked ? "line-through" : "none", lineHeight:1.3 }}>{item.name}</div>
+                </div>
+                {item.note && <div style={{ fontSize:12, color:"#8B7B68", marginBottom:8 }}>{item.note}</div>}
+                <a href={item.url} target="_blank" rel="noopener noreferrer" style={{ fontSize:12, color:"#2C5670", fontWeight:500, textDecoration:"none", display:"inline-flex", alignItems:"center", gap:4 }}>
+                  Explore →
+                </a>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ marginTop:24, padding:"14px 16px", background:"#EBF3FB", borderRadius:12, border:"1px solid #A8C4D8", fontSize:13, color:"#2C5670", lineHeight:1.6 }}>
+        More adventures coming soon — add them anytime.
+      </div>
+    </div>
+  );
+}
+
 function GlowUpTabs() {
   const [tab, setTab] = useState("wardrobe");
   const tabs = [
@@ -944,8 +1014,8 @@ const CARDS = [
     className: "fun",
     title: "Fun",
     desc: "What you're doing for pure pleasure this year — trips, moments, things that are just for you.",
-    badge: "soon",
-    component: null,
+    badge: "interactive",
+    component: <FunList />,
     eyebrow: "Joy & Adventure",
   },
 ];
