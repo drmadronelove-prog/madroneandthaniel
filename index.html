@@ -39,11 +39,8 @@
   body {
     font-family: var(--sans);
     background:
-      radial-gradient(ellipse 80% 60% at 85% -10%, rgba(212,168,75,0.14), transparent 60%),
-      radial-gradient(ellipse 70% 55% at -10% 30%, rgba(95,107,72,0.10), transparent 55%),
-      radial-gradient(ellipse 60% 50% at 100% 90%, rgba(189,100,64,0.08), transparent 55%),
-      var(--bg);
-    background-attachment: fixed;
+      linear-gradient(rgba(243,231,219,0.82), rgba(243,231,219,0.86)),
+      url('lesli-bg.jpg') center / cover no-repeat fixed;
     color: var(--text);
     min-height: 100vh;
     position: relative;
@@ -66,9 +63,8 @@
   #pw-screen {
     position: fixed; inset: 0; z-index: 1000;
     background:
-      radial-gradient(ellipse 90% 70% at 70% -20%, rgba(212,168,75,0.16), transparent 60%),
-      radial-gradient(ellipse 80% 60% at 0% 110%, rgba(44,86,112,0.5), transparent 60%),
-      var(--ink);
+      linear-gradient(rgba(20,41,58,0.88), rgba(20,41,58,0.92)),
+      url('lesli-bg.jpg') center / cover no-repeat fixed;
     display: flex; align-items: center; justify-content: center;
     flex-direction: column; gap: 0;
     overflow: hidden;
