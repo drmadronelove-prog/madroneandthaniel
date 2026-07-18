@@ -1248,6 +1248,12 @@ function ReadingList() {
                   {book.author} · {book.year}
                   <span style={{ marginLeft:8, fontSize:10, fontWeight:500, letterSpacing:"0.5px", textTransform:"uppercase", color:"#9C8C7D" }}>{book.genre}</span>
                 </div>
+                <a
+                  href={`https://sfpl.bibliocommons.com/v2/search?query=${encodeURIComponent(book.title + " " + book.author)}&searchType=smart`}
+                  target="_blank" rel="noopener noreferrer"
+                  onClick={e => e.stopPropagation()}
+                  style={{ fontSize:11, color:"#2C5670", fontWeight:500, textDecoration:"none", display:"inline-block", marginTop:4 }}
+                >Find at SFPL →</a>
               </div>
             </div>
           );
