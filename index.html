@@ -642,10 +642,28 @@ function DecisionalBalance() {
 }
 
 function GlowUpChecklist() {
+  const [cats, setCats] = useState(() => {
+    try {
+      const saved = localStorage.getItem("thrive-glowup-items");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return CATEGORIES.map(cat => ({
+      title: cat.title,
+      icon: cat.icon,
+      items: cat.items.map((item, i) => ({ ...item, id: `${cat.title}-${i}` })),
+    }));
+  });
   const [checked, setChecked] = useState(() => {
     try { return new Set(JSON.parse(localStorage.getItem("thrive-glowup") || "[]")); }
     catch { return new Set(); }
   });
+  const [addingTo, setAddingTo] = useState(null);
+  const [form, setForm] = useState({ name:"", color:"" });
+
+  const saveCats = (next) => {
+    setCats(next);
+    localStorage.setItem("thrive-glowup-items", JSON.stringify(next));
+  };
 
   const toggle = (key) => {
     setChecked(prev => {
@@ -656,12 +674,27 @@ function GlowUpChecklist() {
     });
   };
 
+  const addItem = (catTitle) => {
+    if (!form.name.trim()) return;
+    const newItem = { id: "glow-" + Date.now(), name: form.name.trim(), color: form.color.trim(), qty: 1, search: form.name.trim() };
+    saveCats(cats.map(c => c.title === catTitle ? { ...c, items: [...c.items, newItem] } : c));
+    setForm({ name:"", color:"" });
+    setAddingTo(null);
+  };
+
+  const removeItem = (catTitle, id) => {
+    saveCats(cats.map(c => c.title === catTitle ? { ...c, items: c.items.filter(it => it.id !== id) } : c));
+    setChecked(prev => { const next = new Set(prev); next.delete(id); localStorage.setItem("thrive-glowup", JSON.stringify([...next])); return next; });
+  };
+
   const reset = () => {
     setChecked(new Set());
     localStorage.removeItem("thrive-glowup");
   };
 
-  const totalItems = CATEGORIES.reduce((s, c) => s + c.items.length, 0);
+  const inp = { fontFamily:"'Hanken Grotesk',sans-serif", fontSize:13, color:"#35291E", background:"#F3E7DB", border:"1px solid #D8C3B0", borderRadius:0, padding:"9px 12px", outline:"none", width:"100%" };
+
+  const totalItems = cats.reduce((s, c) => s + c.items.length, 0);
   const progress = totalItems > 0 ? (checked.size / totalItems) * 100 : 0;
 
   return (
@@ -675,9 +708,9 @@ function GlowUpChecklist() {
         <div style={{ fontSize:12, color:"#A89880", marginTop:6 }}>{checked.size} of {totalItems} found</div>
       </div>
 
-      {CATEGORIES.map((cat) => {
-        const count = cat.items.filter((_, i) => checked.has(`${cat.title}-${i}`)).length;
-        const allDone = count === cat.items.length;
+      {cats.map((cat) => {
+        const count = cat.items.filter(item => checked.has(item.id)).length;
+        const allDone = count === cat.items.length && cat.items.length > 0;
         return (
           <div key={cat.title} style={{ marginBottom:20, background:"#FFFCF7", borderRadius:12, border:"1px solid #E8DFD4", overflow:"hidden" }}>
             <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 16px", background: allDone ? "#F0EBE2" : "#F7F0E6", borderBottom:"1px solid #E8DFD4" }}>
@@ -686,13 +719,12 @@ function GlowUpChecklist() {
               </div>
               <div style={{ fontSize:12, color:"#8B7B68", background:"#FFFCF7", padding:"2px 10px", borderRadius:20 }}>{count}/{cat.items.length}</div>
             </div>
-            {cat.items.map((item, i) => {
-              const key = `${cat.title}-${i}`;
-              const isChecked = checked.has(key);
+            {cat.items.map((item) => {
+              const isChecked = checked.has(item.id);
               return (
                 <div
-                  key={i}
-                  onClick={() => toggle(key)}
+                  key={item.id}
+                  onClick={() => toggle(item.id)}
                   style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"12px 16px", borderBottom:"1px solid #E8DFD4", cursor:"pointer", opacity: isChecked ? 0.5 : 1, background: isChecked ? "#FAF7F2" : "transparent", transition:"opacity 0.2s" }}
                 >
                   <div style={{ width:20, height:20, minWidth:20, borderRadius:"50%", border: isChecked ? "none" : "2px solid #C4A882", background: isChecked ? "#8B6B2F" : "transparent", display:"flex", alignItems:"center", justifyContent:"center", marginTop:2, transition:"all 0.2s" }}>
@@ -706,9 +738,26 @@ function GlowUpChecklist() {
                     {item.brands && <div style={{ fontSize:11, color:"#A89880", marginTop:2 }}>Try: {item.brands}</div>}
                     <div style={{ fontSize:11, color:"#B8A898", marginTop:3, fontStyle:"italic" }}>Search: "{item.search}"</div>
                   </div>
+                  <button onClick={e => { e.stopPropagation(); removeItem(cat.title, item.id); }} style={{ background:"none", border:"none", cursor:"pointer", color:"#C4B8AF", fontSize:16, padding:"0 2px", lineHeight:1, flexShrink:0 }} title="Remove">×</button>
                 </div>
               );
             })}
+            {addingTo === cat.title ? (
+              <div style={{ padding:"14px 16px", borderTop:"1px solid #E8DFD4", background:"#FAF7F2" }}>
+                <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                  <input style={inp} placeholder="Item name" value={form.name} onChange={e => setForm(f => ({...f, name:e.target.value}))} onKeyDown={e => e.key==="Enter" && addItem(cat.title)} autoFocus />
+                  <input style={inp} placeholder="Color / note (optional)" value={form.color} onChange={e => setForm(f => ({...f, color:e.target.value}))} onKeyDown={e => e.key==="Enter" && addItem(cat.title)} />
+                  <div style={{ display:"flex", gap:8 }}>
+                    <button onClick={() => addItem(cat.title)} style={{ flex:1, padding:"9px", background:"#1B3A4E", color:"#fff", border:"none", cursor:"pointer", fontFamily:"'IBM Plex Mono',monospace", fontSize:10, fontWeight:600, letterSpacing:"2px", textTransform:"uppercase" }}>Add</button>
+                    <button onClick={() => { setAddingTo(null); setForm({name:"",color:""}); }} style={{ padding:"9px 14px", background:"none", color:"#97836F", border:"1px solid #D8C3B0", cursor:"pointer", fontFamily:"'Hanken Grotesk',sans-serif", fontSize:11 }}>Cancel</button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <button onClick={() => { setAddingTo(cat.title); setForm({name:"",color:""}); }} style={{ width:"100%", padding:"10px", background:"none", border:"none", borderTop:"1px dashed #E8DFD4", color:"#A89880", cursor:"pointer", fontFamily:"'Hanken Grotesk',sans-serif", fontSize:12, textAlign:"left", paddingLeft:16 }}>
+                + Add item
+              </button>
+            )}
           </div>
         );
       })}
@@ -734,8 +783,9 @@ function GlowUpChecklist() {
 // ─────────────────────────────────────────────
 // NESTING WISHLIST
 // ─────────────────────────────────────────────
-const NESTING_ITEMS = [
+const DEFAULT_NESTING_ITEMS = [
   {
+    id: "nest-1",
     name: "Rochester Modern Spindle Dining Chairs (set of 2)",
     note: "Beige / Walnut — Lifestorey",
     url: "https://www.target.com/p/lifestorey-set-of-2-rochester-modern-spindle-upholstered-dining-chair-beige-walnut/-/A-1009714404",
@@ -743,20 +793,54 @@ const NESTING_ITEMS = [
   },
 ];
 
+function storeLabel(url) {
+  try { return new URL(url).hostname.replace(/^www\./, "").split(".")[0]; }
+  catch { return null; }
+}
+
 function NestingList() {
+  const [items, setItems] = useState(() => {
+    try {
+      const saved = localStorage.getItem("thrive-nesting-items");
+      return saved ? JSON.parse(saved) : DEFAULT_NESTING_ITEMS;
+    } catch { return DEFAULT_NESTING_ITEMS; }
+  });
   const [checked, setChecked] = useState(() => {
-    try { return new Set(JSON.parse(localStorage.getItem("thrive-nesting") || "[]")); }
+    try { return new Set(JSON.parse(localStorage.getItem("thrive-nesting-checked") || "[]")); }
     catch { return new Set(); }
   });
+  const [adding, setAdding] = useState(false);
+  const [form, setForm] = useState({ name:"", note:"", url:"" });
 
-  const toggle = (i) => {
+  const saveItems = (next) => {
+    setItems(next);
+    localStorage.setItem("thrive-nesting-items", JSON.stringify(next));
+  };
+
+  const toggle = (id) => {
     setChecked(prev => {
       const next = new Set(prev);
-      next.has(i) ? next.delete(i) : next.add(i);
-      localStorage.setItem("thrive-nesting", JSON.stringify([...next]));
+      next.has(id) ? next.delete(id) : next.add(id);
+      localStorage.setItem("thrive-nesting-checked", JSON.stringify([...next]));
       return next;
     });
   };
+
+  const addItem = () => {
+    if (!form.name.trim()) return;
+    const url = form.url.trim();
+    const newItem = { id: "nest-" + Date.now(), name: form.name.trim(), note: form.note.trim(), url, store: url ? storeLabel(url) : null };
+    saveItems([...items, newItem]);
+    setForm({ name:"", note:"", url:"" });
+    setAdding(false);
+  };
+
+  const removeItem = (id) => {
+    saveItems(items.filter(it => it.id !== id));
+    setChecked(prev => { const next = new Set(prev); next.delete(id); localStorage.setItem("thrive-nesting-checked", JSON.stringify([...next])); return next; });
+  };
+
+  const inp = { fontFamily:"'Hanken Grotesk',sans-serif", fontSize:13, color:"#35291E", background:"#F3E7DB", border:"1px solid #D8C3B0", borderRadius:0, padding:"10px 12px", outline:"none", width:"100%" };
 
   return (
     <div>
@@ -764,12 +848,12 @@ function NestingList() {
         Things for the home — click an item to mark it found, or tap the link to shop.
       </div>
       <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-        {NESTING_ITEMS.map((item, i) => {
-          const isChecked = checked.has(i);
+        {items.map((item) => {
+          const isChecked = checked.has(item.id);
           return (
-            <div key={i} style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"14px 16px", borderRadius:12, border:`1px solid ${isChecked ? "#C4A882" : "#E8DFD4"}`, background: isChecked ? "#F0EBE2" : "#FFFCF7" }}>
+            <div key={item.id} style={{ display:"flex", alignItems:"flex-start", gap:12, padding:"14px 16px", border:`1px solid ${isChecked ? "#C4A882" : "#E8DFD4"}`, background: isChecked ? "#F0EBE2" : "#FFFCF7" }}>
               <div
-                onClick={() => toggle(i)}
+                onClick={() => toggle(item.id)}
                 style={{ width:22, height:22, minWidth:22, borderRadius:"50%", border: isChecked ? "none" : "2px solid #C4A882", background: isChecked ? "#8B6B2F" : "transparent", display:"flex", alignItems:"center", justifyContent:"center", marginTop:2, cursor:"pointer", transition:"all 0.2s", flexShrink:0 }}
               >
                 {isChecked && <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
@@ -779,17 +863,36 @@ function NestingList() {
                   {item.name}
                 </div>
                 {item.note && <div style={{ fontSize:12, color:"#8B7B68", marginBottom:6 }}>{item.note}</div>}
-                <a href={item.url} target="_blank" rel="noopener noreferrer" style={{ fontSize:12, color:"#7A8C6E", fontWeight:500, textDecoration:"none", display:"inline-flex", alignItems:"center", gap:4 }}>
-                  Shop at {item.store} →
-                </a>
+                {item.url && (
+                  <a href={item.url} target="_blank" rel="noopener noreferrer" style={{ fontSize:12, color:"#7A8C6E", fontWeight:500, textDecoration:"none", display:"inline-flex", alignItems:"center", gap:4 }}>
+                    {item.store ? `Shop at ${item.store}` : "Shop"} →
+                  </a>
+                )}
               </div>
+              <button onClick={() => removeItem(item.id)} style={{ background:"none", border:"none", cursor:"pointer", color:"#C4B8AF", fontSize:16, padding:"0 2px", lineHeight:1, flexShrink:0 }} title="Remove">×</button>
             </div>
           );
         })}
       </div>
-      <div style={{ marginTop:24, padding:"14px 16px", background:"#EEF2EA", borderRadius:12, border:"1px solid #D4DEC9", fontSize:13, color:"#5A6E4A", lineHeight:1.6 }}>
-        More items coming soon — add them anytime.
-      </div>
+
+      {adding ? (
+        <div style={{ marginTop:16, border:"1px solid #D8C3B0", padding:"16px", background:"#FBF6EF" }}>
+          <div style={{ fontFamily:"'IBM Plex Mono',monospace", fontSize:9, fontWeight:500, letterSpacing:"3px", textTransform:"uppercase", color:"#B0831F", marginBottom:12 }}>New item</div>
+          <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+            <input style={inp} placeholder="Name (e.g. Linen curtains)" value={form.name} onChange={e => setForm(f => ({...f, name:e.target.value}))} onKeyDown={e => e.key==="Enter" && addItem()} autoFocus />
+            <input style={inp} placeholder="Note (optional)" value={form.note} onChange={e => setForm(f => ({...f, note:e.target.value}))} />
+            <input style={inp} placeholder="Link (optional)" value={form.url} onChange={e => setForm(f => ({...f, url:e.target.value}))} />
+            <div style={{ display:"flex", gap:8, marginTop:4 }}>
+              <button onClick={addItem} style={{ flex:1, padding:"10px", background:"#1B3A4E", color:"#fff", border:"none", cursor:"pointer", fontFamily:"'IBM Plex Mono',monospace", fontSize:10, fontWeight:600, letterSpacing:"2px", textTransform:"uppercase" }}>Add</button>
+              <button onClick={() => { setAdding(false); setForm({name:"",note:"",url:""}); }} style={{ padding:"10px 16px", background:"none", color:"#97836F", border:"1px solid #D8C3B0", cursor:"pointer", fontFamily:"'Hanken Grotesk',sans-serif", fontSize:11 }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <button onClick={() => setAdding(true)} style={{ marginTop:16, width:"100%", padding:"12px", background:"none", border:"1px dashed #C4B0A0", color:"#97836F", cursor:"pointer", fontFamily:"'Hanken Grotesk',sans-serif", fontSize:12, fontWeight:500 }}>
+          + Add an item
+        </button>
+      )}
     </div>
   );
 }
